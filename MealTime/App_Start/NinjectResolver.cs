@@ -1,10 +1,9 @@
 ﻿using Ninject;
-using System.Web.Mvc;
 using System.Configuration;
 
 namespace MealTime.App_Start
 {
-    public class NinjectResolver : IDependencyResolver
+    public class NinjectResolver 
     {
         private readonly IKernel _kernel;
 
