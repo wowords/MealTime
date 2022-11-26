@@ -22,6 +22,7 @@ namespace MealTime.Models
         public FoodType Type { get; set; }
         public bool IsHealthy { get; set; }
         public bool IsDeleted { get; set; }
+        public ICollection<Meal> Meals { get; set; }
 
     }
 }

@@ -12,7 +12,7 @@ namespace MealTime.Models
         public MealTimeContext(DbContextOptions<MealTimeContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Food> Foods { get; set; }
