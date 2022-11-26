@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using MealTime.API.Infrastructure.Repositories;
+using MealTime.Models.Repository;
 
 namespace MealTime.API.Infrastructure
 {
@@ -20,9 +22,19 @@ namespace MealTime.API.Infrastructure
 
             //Add repositories
 
-            //builder.RegisterType<Repository>()
-            //    .As<Irepository>()
-            //    .InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>()
+                .As<IUserRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<FoodRepository>()
+                .As<IFoodRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<MealRepository>()
+                .As<IMealRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<WeeklyMenuRepository>()
+                .As<IWeeklyMenuRepository>()
+                .InstancePerLifetimeScope();
+
         }
     }
 }

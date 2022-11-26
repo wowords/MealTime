@@ -9,7 +9,8 @@ namespace MealTime.Models
 {
     public class WeeklyMenu
     {
+        public int Id { get; set; }
         public List<Meal> Meals { get; set; }
-        public Calendar Calendar { get; set; }
+        public DateTime CurrentWeek { get; set; }
     }
 }

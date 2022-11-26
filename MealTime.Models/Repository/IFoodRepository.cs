@@ -8,7 +8,7 @@ namespace MealTime.Models.Repository
 {
     public interface IFoodRepository
     {
-        void Create(Meal meal, HashSet<int> foodIds);
+        void Create(Food food);
         void Delete(int id);
         void Update(Food food);
     }

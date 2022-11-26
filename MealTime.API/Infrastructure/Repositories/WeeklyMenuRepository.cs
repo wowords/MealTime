@@ -1,8 +1,9 @@
 ﻿using MealTime.Models;
+using MealTime.Models.Repository;
 
 namespace MealTime.API.Infrastructure.Repositories
 {
-    public class WeeklyMenuRepository
+    public class WeeklyMenuRepository : IWeeklyMenuRepository
     {
         private readonly MealTimeContext _context;
         public WeeklyMenuRepository(MealTimeContext context)

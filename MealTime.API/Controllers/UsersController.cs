@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MealTime.Models;
-using MealTime.API.Infrastructure.Repositories;
+using MealTime.Models.Repository;
 
 namespace MealTime.API.Controllers
 {
@@ -27,14 +27,14 @@ namespace MealTime.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _userRepo.GettUsers();
+            return null;
         }
 
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
         {
-            return _userRepo.GetAdminUsers();
+            return null;
         }
 
         // GET: api/Users/5
