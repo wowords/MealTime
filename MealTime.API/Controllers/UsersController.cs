@@ -27,7 +27,7 @@ namespace MealTime.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return _userRepo.GettUsers();
+            return await _userRepo.GettUsers();
         }
 
         // GET: api/Users

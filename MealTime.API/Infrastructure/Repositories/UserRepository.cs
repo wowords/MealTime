@@ -1,4 +1,6 @@
 ﻿using MealTime.Models;
+using MealTime.Models.Repository;
+using System.Globalization;
 
 namespace MealTime.API.Infrastructure.Repositories
 {
@@ -9,7 +11,7 @@ namespace MealTime.API.Infrastructure.Repositories
         {
             _context = context;
         }
-        public void Create(User user)
+        public async void Create(User user)
         {
             _context.Users.Add(user);
         }
@@ -24,12 +26,12 @@ namespace MealTime.API.Infrastructure.Repositories
             _context.Users.Remove(user);
         }
 
-        public IEnumerable<User> GetAdminUsers()
+        public async Task<IEnumerable<User>> GetAdminUsers()
         {
-            return _context.Users.Where(x => x.IsAdmin == true).ToList();
+            return _context.Users.Where(x => x.IsAdmin == true);
         }
 
-        public IEnumerable<User> GettUsers()
+        public async Task<IEnumerable<User>> GettUsers()
         {
             return _context.Users.ToList();
         }
