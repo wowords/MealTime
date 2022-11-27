@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using MealTime.API.Infrastructure.Queries;
 using MealTime.API.Infrastructure.Repositories;
 using MealTime.Models.Repository;
 
@@ -17,8 +18,8 @@ namespace MealTime.API.Infrastructure
 
             //Add queries
 
-            //builder.Register(_ => new Queries(QueriesConnectionString))
-            //     .As<IQueries>().InstancePerlifetimeScope();
+            builder.Register(_ => new UserQueries(QueriesConnectionString))
+                 .As<IUserQueries>().InstancePerLifetimeScope();
 
             //Add repositories
 

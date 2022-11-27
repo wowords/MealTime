@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MealTime.Models;
 using MealTime.Models.Repository;
+using System.Net;
+using MealTime.API.Infrastructure.Queries;
 
 namespace MealTime.API.Controllers
 {
@@ -16,25 +18,53 @@ namespace MealTime.API.Controllers
     {
         private readonly MealTimeContext _context;
         private readonly IUserRepository _userRepo;
+        private readonly IUserQueries _userQueries;
 
-        public UsersController(MealTimeContext context, IUserRepository userRepo)
+        public UsersController(MealTimeContext context, IUserRepository userRepo, IUserQueries userQueries)
         {
             _context = context;
             _userRepo = userRepo;
+            _userQueries = userQueries;
         }
 
         // GET: api/Users
+        [Route("GetUsers")]
         [HttpGet]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return null;
+            try
+            {
+                var result = await _userQueries.GetAllUsers();
+                if (result == null)
+                    return NotFound();
+                return Ok(result);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
-        // GET: api/Users
+        // GET: api/Admins
+        [Route("GetAdmins")]
         [HttpGet]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
         {
-            return null;
+            try
+            {
+                var result = await _userQueries.GetAllUsers();
+                if (result == null)
+                    return NotFound();
+                return Ok(result);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         // GET: api/Users/5
@@ -77,15 +107,31 @@ namespace MealTime.API.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Route("Create")]
         [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<User>> AddUser(User user)
         {
-            _userRepo.Create(user);
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            if(user == null)
+                return BadRequest();
+            try
+            {
+                _userRepo.Create(user);
+                //return CreatedAtAction("GetUser", new { id = user.Id }, user);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // DELETE: api/Users/5
+        [Route("Delete")]
         [HttpDelete("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteUser(int id)
         {
             //if (user == null)

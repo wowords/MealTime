@@ -13,7 +13,9 @@ namespace MealTime.API.Infrastructure.Repositories
         }
         public async void Create(User user)
         {
+            CheckIfExists(user.Email, user.UserName);  
             _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
 
         public async void Delete(int id)
@@ -40,7 +42,14 @@ namespace MealTime.API.Infrastructure.Repositories
         {
              _context.Users.Update(user);
              _context.SaveChanges();
-
+        }
+        private void CheckIfExists(string email, string username)
+        {
+            User user = _context.Users.Where(x => x.Email == email || x.UserName == username).FirstOrDefault();
+            if (user == null)
+                return null;
+            else
+                throw new MealTimeException("Az adott felhasználónév vagy email már használatban van. Kérem jelentkezzen be!");
         }
     }
 }
