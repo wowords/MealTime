@@ -6,35 +6,35 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MealTime.Models;
-using MealTime.Models.Repository;
 using System.Net;
+using MealTime.Models.Repository;
 using MealTime.API.Infrastructure.Queries;
 
 namespace MealTime.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class FoodsController : ControllerBase
     {
-        private readonly IUserRepository _userRepo;
-        private readonly IUserQueries _userQueries;
+        private readonly IFoodRepository _foodRepo;
+        private readonly IFoodQueries _foodQueries;
 
-        public UsersController(IUserRepository userRepo, IUserQueries userQueries)
+        public FoodsController(MealTimeContext context, IFoodRepository foodRepo, IFoodQueries foodQueries)
         {
-            _userRepo = userRepo;
-            _userQueries = userQueries;
+            _foodRepo = foodRepo;
+            _foodQueries = foodQueries; 
         }
 
         // GET: api/Users
-        [Route("GetUsers")]
+        [Route("GetFoods")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Food>>> GetUsers()
         {
             try
             {
-                var result = await _userQueries.GetAllUsers();
+                var result = await _foodQueries.GetAllFoods();
                 if (result == null)
                     return NotFound();
                 return Ok(result);
@@ -46,15 +46,15 @@ namespace MealTime.API.Controllers
         }
 
         // GET: api/Admins
-        [Route("GetAdmins")]
+        [Route("GetFoodById")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
+        public async Task<ActionResult<Food>> GetFoodById(int foodId)
         {
             try
             {
-                var result = await _userQueries.GetAllUsers();
+                var result = await _foodQueries.GetFoodById(foodId);
                 if (result == null)
                     return NotFound();
                 return Ok(result);
@@ -65,24 +65,17 @@ namespace MealTime.API.Controllers
             }
         }
 
-        // GET: api/Users/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<User>> GetUser(int id)
-        //{        
-
-        //}
-
         [Route("Update")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Update(User user)
+        public async Task<IActionResult> Update(Food food)
         {
-            if (user.Id <= 0)
+            if (food.Id <= 0)
                 return BadRequest();
             try
             {
-                await _userRepo.Update(user);
+                await _foodRepo.Update(food);
                 return Ok();
             }
             catch (Exception e)
@@ -96,13 +89,13 @@ namespace MealTime.API.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<User>> AddUser(User user)
+        public async Task<ActionResult<Food>> AddFood(Food food)
         {
-            if(user == null)
+            if (food == null)
                 return BadRequest();
             try
             {
-                await _userRepo.Create(user);
+                await _foodRepo.Create(food);
                 return Ok();
             }
             catch (Exception e)
@@ -111,17 +104,17 @@ namespace MealTime.API.Controllers
             }
         }
 
-        [Route("{userId:int}/delete")]
+        [Route("{foodId:int}/delete")]
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteFood(int id)
         {
             if (id <= 0)
                 return BadRequest();
             try
             {
-                await _userRepo.Delete(id);
+                await _foodRepo.Delete(id);
                 return Ok();
             }
             catch (Exception e)

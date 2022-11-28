@@ -1,4 +1,7 @@
 ﻿using Autofac;
+using MealTime.API.Infrastructure.Queries;
+using MealTime.API.Infrastructure.Repositories;
+using MealTime.Models.Repository;
 
 namespace MealTime.API.Infrastructure
 {
@@ -15,14 +18,31 @@ namespace MealTime.API.Infrastructure
 
             //Add queries
 
-            //builder.Register(_ => new Queries(QueriesConnectionString))
-            //     .As<IQueries>().InstancePerlifetimeScope();
+            builder.Register(_ => new UserQueries(QueriesConnectionString))
+                 .As<IUserQueries>().InstancePerLifetimeScope();
+            builder.Register(_ => new FoodQueries(QueriesConnectionString))
+                 .As<IFoodQueries>().InstancePerLifetimeScope();
+            builder.Register(_ => new MealQueries(QueriesConnectionString))
+                 .As<IMealQueries>().InstancePerLifetimeScope();
+            builder.Register(_ => new WeeklyMenuQueries(QueriesConnectionString))
+                 .As<IWeeklyMenuQueries>().InstancePerLifetimeScope();
+
 
             //Add repositories
 
-            //builder.RegisterType<Repository>()
-            //    .As<Irepository>()
-            //    .InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>()
+                .As<IUserRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<FoodRepository>()
+                .As<IFoodRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<MealRepository>()
+                .As<IMealRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<WeeklyMenuRepository>()
+                .As<IWeeklyMenuRepository>()
+                .InstancePerLifetimeScope();
+
         }
     }
 }

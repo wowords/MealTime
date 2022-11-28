@@ -4,6 +4,7 @@ using MealTime.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealTime.Models.infrastructure.Migrations
 {
     [DbContext(typeof(MealTimeContext))]
-    partial class MealTimeContextModelSnapshot : ModelSnapshot
+    [Migration("20221126170348_InitModel")]
+    partial class InitModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace MealTime.Models.infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("FoodMeal", b =>
-                {
-                    b.Property<int>("FoodsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MealsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FoodsId", "MealsId");
-
-                    b.HasIndex("MealsId");
-
-                    b.ToTable("FoodMeal");
-                });
 
             modelBuilder.Entity("MealTime.Models.Food", b =>
                 {
@@ -51,14 +38,20 @@ namespace MealTime.Models.infrastructure.Migrations
                     b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsHealthy")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("MealId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Rating")
+                    b.Property<double>("Rating")
                         .HasColumnType("float");
 
                     b.Property<string>("Recipe")
@@ -69,6 +62,8 @@ namespace MealTime.Models.infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MealId");
 
                     b.ToTable("Foods");
                 });
@@ -81,16 +76,18 @@ namespace MealTime.Models.infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("HasHealthyFood")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastOnMenu")
                         .HasColumnType("datetime2");
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
+                    b.Property<int?>("WeeklyMenuId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WeeklyMenuId");
 
                     b.ToTable("Meals");
                 });
@@ -143,49 +140,28 @@ namespace MealTime.Models.infrastructure.Migrations
                     b.ToTable("WeeklyMenus");
                 });
 
-            modelBuilder.Entity("MealWeeklyMenu", b =>
-                {
-                    b.Property<int>("MealsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenusId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MealsId", "MenusId");
-
-                    b.HasIndex("MenusId");
-
-                    b.ToTable("MealWeeklyMenu");
-                });
-
-            modelBuilder.Entity("FoodMeal", b =>
-                {
-                    b.HasOne("MealTime.Models.Food", null)
-                        .WithMany()
-                        .HasForeignKey("FoodsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MealTime.Models.Meal", null)
-                        .WithMany()
-                        .HasForeignKey("MealsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MealWeeklyMenu", b =>
+            modelBuilder.Entity("MealTime.Models.Food", b =>
                 {
                     b.HasOne("MealTime.Models.Meal", null)
-                        .WithMany()
-                        .HasForeignKey("MealsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Foods")
+                        .HasForeignKey("MealId");
+                });
 
+            modelBuilder.Entity("MealTime.Models.Meal", b =>
+                {
                     b.HasOne("MealTime.Models.WeeklyMenu", null)
-                        .WithMany()
-                        .HasForeignKey("MenusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Meals")
+                        .HasForeignKey("WeeklyMenuId");
+                });
+
+            modelBuilder.Entity("MealTime.Models.Meal", b =>
+                {
+                    b.Navigation("Foods");
+                });
+
+            modelBuilder.Entity("MealTime.Models.WeeklyMenu", b =>
+                {
+                    b.Navigation("Meals");
                 });
 #pragma warning restore 612, 618
         }

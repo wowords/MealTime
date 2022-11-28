@@ -2,9 +2,9 @@
 
 #nullable disable
 
-namespace MealTime.Models.infrastructure.migrations
+namespace MealTime.Models.infrastructure.Migrations
 {
-    public partial class usermigration : Migration
+    public partial class nullableMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

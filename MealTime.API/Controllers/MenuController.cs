@@ -1,40 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using MealTime.API.Infrastructure.Helpers;
+using MealTime.API.Infrastructure.Queries;
 using MealTime.Models;
 using MealTime.Models.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using MealTime.API.Infrastructure.Queries;
 
 namespace MealTime.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class MenuController : ControllerBase
     {
-        private readonly IUserRepository _userRepo;
-        private readonly IUserQueries _userQueries;
+        private readonly  IWeeklyMenuRepository _menuRepo;
+        private readonly IWeeklyMenuQueries  _menuQueries;
+        private readonly IMealQueries _mealQueries;
+        private readonly IMealRepository _mealRepo;
 
-        public UsersController(IUserRepository userRepo, IUserQueries userQueries)
+        public MenuController(IWeeklyMenuRepository menuRepository, IWeeklyMenuQueries menuQueries, IMealQueries mealQueries, IMealRepository mealRepository)
         {
-            _userRepo = userRepo;
-            _userQueries = userQueries;
+            _menuRepo = menuRepository;
+            _menuQueries = menuQueries;
+            _mealQueries = mealQueries;
+            _mealRepo = mealRepository;
         }
 
-        // GET: api/Users
-        [Route("GetUsers")]
+        [Route("GetMenus")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<WeeklyMenu>>> GetUsers()
         {
             try
             {
-                var result = await _userQueries.GetAllUsers();
+                var result = await _menuRepo.GetAllMenus();
                 if (result == null)
                     return NotFound();
                 return Ok(result);
@@ -45,16 +44,15 @@ namespace MealTime.API.Controllers
             }
         }
 
-        // GET: api/Admins
-        [Route("GetAdmins")]
+        [Route("GetMenuById")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<User>>> GetAdmins()
+        public async Task<ActionResult<WeeklyMenu>> GetFoodById(int menuId)
         {
             try
             {
-                var result = await _userQueries.GetAllUsers();
+                var result = await _menuQueries.GetMenuById(menuId);
                 if (result == null)
                     return NotFound();
                 return Ok(result);
@@ -64,25 +62,18 @@ namespace MealTime.API.Controllers
                 return NotFound();
             }
         }
-
-        // GET: api/Users/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<User>> GetUser(int id)
-        //{        
-
-        //}
 
         [Route("Update")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Update(User user)
+        public async Task<IActionResult> Update(WeeklyMenu menu)
         {
-            if (user.Id <= 0)
+            if (menu.Id <= 0)
                 return BadRequest();
             try
             {
-                await _userRepo.Update(user);
+                await _menuRepo.Update(menu, menu.Meals.Select(x => x.Id).ToHashSet());
                 return Ok();
             }
             catch (Exception e)
@@ -96,13 +87,15 @@ namespace MealTime.API.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<User>> AddUser(User user)
+        public async Task<ActionResult<WeeklyMenu>> Addmenu()
         {
-            if(user == null)
+            var helper = new MenuHelper(_mealQueries, _mealRepo);
+            WeeklyMenu menu = await helper.GenerateWeeklyMenu();
+            if (menu == null)
                 return BadRequest();
             try
             {
-                await _userRepo.Create(user);
+                await _menuRepo.Create(menu);
                 return Ok();
             }
             catch (Exception e)
@@ -111,17 +104,17 @@ namespace MealTime.API.Controllers
             }
         }
 
-        [Route("{userId:int}/delete")]
+        [Route("{menuId:int}/delete")]
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteMenu(int id)
         {
             if (id <= 0)
                 return BadRequest();
             try
             {
-                await _userRepo.Delete(id);
+                await _menuRepo.Delete(id);
                 return Ok();
             }
             catch (Exception e)
@@ -129,5 +122,6 @@ namespace MealTime.API.Controllers
                 return BadRequest(e.Message);
             }
         }
+
     }
 }

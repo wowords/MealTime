@@ -23,7 +23,7 @@ builder.Services.AddDbContext<MealTimeContext>(opt => opt.UseSqlServer(builder.C
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
     .ConfigureContainer<ContainerBuilder>(builder =>
     {
-        builder.RegisterModule(new MealTimeApplicationModule("Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True"));
+        builder.RegisterModule(new MealTimeApplicationModule("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MealTime;Integrated Security=True;"));
     });
 
 var app = builder.Build();

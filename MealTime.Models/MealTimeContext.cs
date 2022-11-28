@@ -12,9 +12,12 @@ namespace MealTime.Models
         public MealTimeContext(DbContextOptions<MealTimeContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<Food> Foods { get; set; }
+        public DbSet<Meal> Meals { get; set; }
+        public DbSet<WeeklyMenu> WeeklyMenus { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
