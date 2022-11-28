@@ -11,29 +11,40 @@ namespace MealTime.API.Infrastructure.Repositories
             _context = context;
         }
 
-        public async void Create(WeeklyMenu menu, HashSet<int> mealIds)
+        public async Task Create(WeeklyMenu menu, HashSet<int> mealIds)
         {
             menu.Meals.Clear();
             if (mealIds is not null)
                 _context.Meals.Where(m => mealIds.Contains(m.Id)).ToList().ForEach(meal => menu.Meals.Add(meal));
+            else
+                throw new MealTimeException("Hiba történt a létrehozás során, menühöz nem tartoznak ételek.");
             _context.WeeklyMenus.Add(menu);
+            await _context.SaveChangesAsync();
         }
 
-        public async void Delete(int id)
+        public async Task Delete(int id)
         {
-            var food = await _context.Foods.FindAsync(id);
-            if (food == null)
+            var menu = await _context.WeeklyMenus.FindAsync(id);
+            if (menu == null)
             {
-                //return NotFound();
+                throw new MealTimeException("Hiba történt a törlés során.");
             }
-            _context.Foods.Remove(food);
+            _context.WeeklyMenus.Remove(menu);
+            await _context.SaveChangesAsync();
         }
-        public async void Update(WeeklyMenu menu, HashSet<int> mealIds)
+        public async Task Update(WeeklyMenu menu, HashSet<int> mealIds)
         {
             menu.Meals.Clear();
             if (mealIds is not null)
                 _context.Meals.Where(m => mealIds.Contains(m.Id)).ToList().ForEach(meal => menu.Meals.Add(meal));
             _context.WeeklyMenus.Update(menu);
+            var local = await _context.WeeklyMenus.FindAsync(menu.Id);
+            if (local == null)
+                throw new MealTimeException("Hiba történt a módosítás során.");
+            else
+                _context.Entry(local).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            _context.Entry(menu).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
     }
 }

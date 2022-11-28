@@ -11,33 +11,52 @@ namespace MealTime.API.Infrastructure.Repositories
             _context = context;
         }
 
-        public async void Create(Meal meal, HashSet<int> foodIds)
+        public async Task Create(Meal meal, HashSet<int> foodIds)
         {
-            meal.Foods.Clear();
+            try
+            {
             if (foodIds is not null)
-                _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => meal.Foods.Add(food));
+                _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => 
+                {
+                    meal.Foods.Add(food);
+                    if (food.IsHealthy == true && meal.HasHealthyFood == false)
+                        meal.HasHealthyFood = true;
+                 });
             else
-                return;
+                throw new MealTimeException("Hiba történt a létrehozás során.");
             _context.Meals.Add(meal);
+            await _context.SaveChangesAsync();
+
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
-        public async void Delete(int id)
+        public async Task Delete(int id)
         {
-            var food = await _context.Foods.FindAsync(id);
-            if (food == null)
+            var meal = await _context.Meals.FindAsync(id);
+            if (meal == null)
             {
-                //return NotFound();
+                throw new MealTimeException("Hiba történt a törlés során.");
             }
-            _context.Foods.Remove(food);
+            _context.Meals.Remove(meal);
+            await _context.SaveChangesAsync();
         }
-        public async void Update(Meal meal, HashSet<int> foodIds)
+        public async Task Update(Meal meal, HashSet<int> foodIds)
         {
             meal.Foods.Clear();
             if (foodIds is not null)
                 _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => meal.Foods.Add(food));
+            var local = await _context.Meals.FindAsync(meal.Id);
+            if (local == null)
+                throw new MealTimeException("Hiba történt a módosítás során.");
             else
-                return;
-            _context.Meals.Update(meal);
+                _context.Entry(local).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            _context.Entry(meal).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
     }
 }

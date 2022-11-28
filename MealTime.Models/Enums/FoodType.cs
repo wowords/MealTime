@@ -15,6 +15,5 @@ namespace MealTime.Models.Enums
         Soup,
         Salads,
         Side
-
     }
 }

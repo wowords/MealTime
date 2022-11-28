@@ -8,8 +8,8 @@ namespace MealTime.Models.Repository
 {
     public interface IFoodRepository
     {
-        void Create(Food food);
-        void Delete(int id);
-        void Update(Food food);
+        Task Create(Food food);
+        Task Delete(int id);
+        Task Update(Food food);
     }
 }

@@ -16,5 +16,6 @@ namespace MealTime.Models
         public ICollection<Food>? Foods { get; set; }
         public double Rating { get; set; }
         public DateTime LastOnMenu { get; set; }
+        public bool HasHealthyFood { get; set; }
     }
 }

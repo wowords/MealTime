@@ -16,13 +16,13 @@ namespace MealTime.Models
         public int Id { get; set; }
         public string Recipe { get; set; }
         public string Name { get; set; }
-        public double Rating { get; set; }
+        public double? Rating { get; set; }
         public FoodCategory Category { get; set; }
         public string? Details { get; set; }
         public FoodType Type { get; set; }
         public bool IsHealthy { get; set; }
-        public bool IsDeleted { get; set; }
-        public ICollection<Meal> Meals { get; set; }
+        //public bool IsDeleted { get; set; } hard delete lesz
+        public ICollection<Meal>? Meals { get; set; }
 
     }
 }

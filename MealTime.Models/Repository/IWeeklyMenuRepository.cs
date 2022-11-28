@@ -8,8 +8,8 @@ namespace MealTime.Models.Repository
 {
     public interface IWeeklyMenuRepository
     {
-        void Create(WeeklyMenu menu, HashSet<int> mealIds);
-        void Delete(int id);
-        void Update(WeeklyMenu menu, HashSet<int> mealIds);
+        Task Create(WeeklyMenu menu, HashSet<int> mealIds);
+        Task Delete(int id);
+        Task Update(WeeklyMenu menu, HashSet<int> mealIds);
     }
 }

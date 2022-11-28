@@ -8,9 +8,8 @@ namespace MealTime.Models.Enums
 {
     public enum FoodCategory
     {
-        Starter,
-        MainDish,
-        Side,
-        Dessert
+        Breakfest,
+        Lunch,
+        Dinner
     }
 }

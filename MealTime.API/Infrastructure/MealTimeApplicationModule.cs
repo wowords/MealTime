@@ -20,6 +20,13 @@ namespace MealTime.API.Infrastructure
 
             builder.Register(_ => new UserQueries(QueriesConnectionString))
                  .As<IUserQueries>().InstancePerLifetimeScope();
+            builder.Register(_ => new FoodQueries(QueriesConnectionString))
+                 .As<IFoodQueries>().InstancePerLifetimeScope();
+            builder.Register(_ => new MealQueries(QueriesConnectionString))
+                 .As<IMealQueries>().InstancePerLifetimeScope();
+            builder.Register(_ => new WeeklyMenuQueries(QueriesConnectionString))
+                 .As<IWeeklyMenuQueries>().InstancePerLifetimeScope();
+
 
             //Add repositories
 

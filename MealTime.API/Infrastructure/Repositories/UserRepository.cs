@@ -11,43 +11,39 @@ namespace MealTime.API.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async void Create(User user)
+        public async Task Create(User user)
         {
             CheckIfExists(user.Email, user.UserName);  
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
 
-        public async void Delete(int id)
+        public async Task Delete(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
-                //return NotFound();
+                throw new MealTimeException("A megadott felhasználó nem található.");
             }
             _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<User>> GetAdminUsers()
+        public async Task Update(User user)
         {
-            return _context.Users.Where(x => x.IsAdmin == true);
-        }
-
-        public async Task<IEnumerable<User>> GettUsers()
-        {
-            return _context.Users.ToList();
-        }
-
-        public void Update(User user)
-        {
-             _context.Users.Update(user);
-             _context.SaveChanges();
+            var local = await _context.Users.FindAsync(user.Id);
+            if(local == null)
+                throw new MealTimeException("Hiba történt a módosítás során.");
+            else
+                _context.Entry(local).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
         private void CheckIfExists(string email, string username)
         {
             User user = _context.Users.Where(x => x.Email == email || x.UserName == username).FirstOrDefault();
             if (user == null)
-                return null;
+                return;
             else
                 throw new MealTimeException("Az adott felhasználónév vagy email már használatban van. Kérem jelentkezzen be!");
         }
