@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using MealTime.API.Infrastructure.DataObjects;
+using MealTime.Models;
+using MealTime.Models.Repository;
 using Microsoft.Data.SqlClient;
 
 namespace MealTime.API.Infrastructure.Queries
@@ -11,64 +13,49 @@ namespace MealTime.API.Infrastructure.Queries
         {
             _connectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
         }
-        public async Task<IEnumerable<MealDto>> GetAllMeals()
+        public async Task<IEnumerable<Meal>> GetAllMeals()
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = await connection.QueryAsync<MealDto>(
+                var result = await connection.QueryAsync<Meal>(
                     @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                                 [Rating],
+                                 [LastOnMenu],
+                                 [HasHealthyFood]
+                        FROM [Meals]");
                 return result;
             }
         }
 
-        public async Task<IEnumerable<MealDto>> GetTopRatedMeals()
+        public async Task<IEnumerable<Meal>> GetTopRatedMeals()
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = await connection.QueryAsync<MealDto>(
-                    @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                var result = await connection.QueryAsync<Meal>(
+                    @"SELECT TOP 10 [Id],
+                                 [Rating],
+                                 [LastOnMenu],
+                                 [HasHealthyFood]
+                        FROM [Meals] ORDER BY [Rating]");
                 return result;
             }
         }
-        public async Task<MealDto> GetMealByid(int Id)
+        public async Task<Meal> GetMealByid(int MealId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = await connection.QueryAsync<MealDto>(
-                    @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                var result = await connection.QueryAsync<Meal>(
+                    @"SELECT     [Id],
+                                 [Rating],
+                                 [LastOnMenu],
+                                 [HasHealthyFood]
+                        FROM [Meals] WHERE [Id] = @MealId",
+                    new { MealId });
                 return result.FirstOrDefault();
             }
-        }
-
-        public async Task<IEnumerable<MealDto>> GetAllMeals()
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = await connection.QueryAsync<MealDto>(
-                    @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
-                return result;
-            }
-        }
-
+        }        
     }
 }

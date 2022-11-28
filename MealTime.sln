@@ -5,9 +5,11 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealTime.API", "MealTime.API\MealTime.API.csproj", "{997329E4-3E3C-4F2B-A51D-A24B94F2E820}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MealTime", "MealTime\MealTime.csproj", "{F419486F-A986-4328-BB70-AA0896943B03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealTime", "MealTime\MealTime.csproj", "{F419486F-A986-4328-BB70-AA0896943B03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MealTime.Models", "MealTime.Models\MealTime.Models.csproj", "{DA9A0127-A717-4111-83B8-0843FB6453AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealTime.Models", "MealTime.Models\MealTime.Models.csproj", "{DA9A0127-A717-4111-83B8-0843FB6453AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MealCreatorService", "MealCreatorService\MealCreatorService.csproj", "{0DB70CDA-D20D-4B5F-BA04-08724590264B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{DA9A0127-A717-4111-83B8-0843FB6453AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA9A0127-A717-4111-83B8-0843FB6453AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA9A0127-A717-4111-83B8-0843FB6453AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DB70CDA-D20D-4B5F-BA04-08724590264B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DB70CDA-D20D-4B5F-BA04-08724590264B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DB70CDA-D20D-4B5F-BA04-08724590264B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DB70CDA-D20D-4B5F-BA04-08724590264B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

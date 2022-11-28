@@ -14,6 +14,7 @@ namespace MealTime.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public ICollection<Food>? Foods { get; set; }
+        public ICollection<WeeklyMenu>? Menus { get; set; }
         public double Rating { get; set; }
         public DateTime LastOnMenu { get; set; }
         public bool HasHealthyFood { get; set; }

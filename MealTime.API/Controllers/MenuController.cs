@@ -1,4 +1,5 @@
-﻿using MealTime.API.Infrastructure.Queries;
+﻿using MealTime.API.Infrastructure.Helpers;
+using MealTime.API.Infrastructure.Queries;
 using MealTime.Models;
 using MealTime.Models.Repository;
 using Microsoft.AspNetCore.Http;
@@ -13,10 +14,15 @@ namespace MealTime.API.Controllers
     {
         private readonly  IWeeklyMenuRepository _menuRepo;
         private readonly IWeeklyMenuQueries  _menuQueries;
-        public MenuController(IWeeklyMenuRepository menuRepository, IWeeklyMenuQueries menuQueries)
+        private readonly IMealQueries _mealQueries;
+        private readonly IMealRepository _mealRepo;
+
+        public MenuController(IWeeklyMenuRepository menuRepository, IWeeklyMenuQueries menuQueries, IMealQueries mealQueries, IMealRepository mealRepository)
         {
             _menuRepo = menuRepository;
             _menuQueries = menuQueries;
+            _mealQueries = mealQueries;
+            _mealRepo = mealRepository;
         }
 
         [Route("GetMenus")]
@@ -27,7 +33,7 @@ namespace MealTime.API.Controllers
         {
             try
             {
-                var result = await _menuQueries.GetAllMenus();
+                var result = await _menuRepo.GetAllMenus();
                 if (result == null)
                     return NotFound();
                 return Ok(result);
@@ -81,13 +87,15 @@ namespace MealTime.API.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<ActionResult<WeeklyMenu>> Addmenu(WeeklyMenu menu)
+        public async Task<ActionResult<WeeklyMenu>> Addmenu()
         {
+            var helper = new MenuHelper(_mealQueries, _mealRepo);
+            WeeklyMenu menu = await helper.GenerateWeeklyMenu();
             if (menu == null)
                 return BadRequest();
             try
             {
-                await _menuRepo .Create(menu, menu.Meals.Select(x => x.Id).ToHashSet());
+                await _menuRepo.Create(menu);
                 return Ok();
             }
             catch (Exception e)

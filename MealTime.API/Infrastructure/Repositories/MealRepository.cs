@@ -1,14 +1,19 @@
-﻿using MealTime.Models;
+﻿using MealTime.API.Infrastructure.DataObjects;
+using MealTime.API.Infrastructure.Queries;
+using MealTime.Models;
 using MealTime.Models.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace MealTime.API.Infrastructure.Repositories
 {
     public class MealRepository : IMealRepository
     {
         private readonly MealTimeContext _context;
-        public MealRepository(MealTimeContext context)
+        private readonly IFoodQueries _foodQueries;
+        public MealRepository(MealTimeContext context, IFoodQueries foodQueries)
         {
             _context = context;
+            _foodQueries = foodQueries;
         }
 
         public async Task Create(Meal meal, HashSet<int> foodIds)
@@ -16,12 +21,15 @@ namespace MealTime.API.Infrastructure.Repositories
             try
             {
             if (foodIds is not null)
-                _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => 
                 {
-                    meal.Foods.Add(food);
-                    if (food.IsHealthy == true && meal.HasHealthyFood == false)
-                        meal.HasHealthyFood = true;
-                 });
+                    (meal.HasHealthyFood, meal.Rating) = await GetHealthinessAndRating(foodIds.ToList());
+                    _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => 
+                    {
+                        meal.Foods.Add(food);
+                        if (food.IsHealthy == true && meal.HasHealthyFood == false)
+                            meal.HasHealthyFood = true;
+                     });
+                }
             else
                 throw new MealTimeException("Hiba történt a létrehozás során.");
             _context.Meals.Add(meal);
@@ -45,18 +53,62 @@ namespace MealTime.API.Infrastructure.Repositories
             _context.Meals.Remove(meal);
             await _context.SaveChangesAsync();
         }
-        public async Task Update(Meal meal, HashSet<int> foodIds)
+        public async Task Update(int mealId, HashSet<int>? foodIds)
         {
-            meal.Foods.Clear();
-            if (foodIds is not null)
-                _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => meal.Foods.Add(food));
-            var local = await _context.Meals.FindAsync(meal.Id);
-            if (local == null)
+
+            Meal meal = await _context.Meals.FindAsync(mealId);
+            if(meal == null)
                 throw new MealTimeException("Hiba történt a módosítás során.");
-            else
-                _context.Entry(local).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-            _context.Entry(meal).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            if(foodIds is not null)
+            {
+                meal.Foods.Clear();
+                _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => meal.Foods.Add(food));
+                (meal.HasHealthyFood, meal.Rating) = await GetHealthinessAndRating(foodIds.ToList());
+            }
+            _context.Meals.Update(meal);
             await _context.SaveChangesAsync();
+            
+            //Meal meal = _context.Meals.fin
+            //meal.Foods.Clear();
+            //if (foodIds is not null)
+            //    _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => meal.Foods.Add(food));
+            //var local = await _context.Meals.FindAsync(meal.Id);
+            //if (local == null)
+            //    throw new MealTimeException("Hiba történt a módosítás során.");
+            //else
+            //    _context.Entry(local).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            //_context.Entry(meal).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //await _context.SaveChangesAsync();
+        }
+
+        public async Task SetLastTimeOnMenu(List<int> mealIds)
+        {
+            foreach (var item in mealIds)
+            {
+                var meal = await _context.Meals.FindAsync(item);
+                meal.LastOnMenu = System.DateTime.Now;
+                _context.Meals.Update(meal);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task<(bool, double)> GetHealthinessAndRating(List<int> foodIds)
+        {
+            bool HasHealthyFood = false;
+            double rating = 0;
+            foreach (var item in foodIds)
+            {
+                FoodDto food = await _foodQueries.GetFoodById(item);
+                if (food.IsHealthy)
+                    HasHealthyFood = true;
+                rating =+ food.Rating;
+
+            }
+            return(HasHealthyFood, rating);
+        }
+        public async Task<IEnumerable<Meal>> GetMealsForEF()
+        {
+            return _context.Meals.Include(f => f.Foods).ToList();
         }
     }
 }

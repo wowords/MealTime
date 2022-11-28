@@ -9,6 +9,7 @@ using MealTime.Models.Repository;
 using MealTime.API.Infrastructure.Queries;
 using System.Net;
 using MealTime.API.Infrastructure.DataObjects;
+using MealTime.API.Infrastructure.Helpers;
 
 namespace MealTime.API.Controllers
 {
@@ -18,7 +19,7 @@ namespace MealTime.API.Controllers
     {
         private readonly IMealRepository _mealRepo;
         private readonly IMealQueries _mealQueries;
-        public MealsController(IMealRepository mealRepository, IMealQueries mealQueries)
+        public MealsController(IMealRepository mealRepository, IMealQueries mealQueries, IFoodQueries foodQueries)
         {
             _mealQueries = mealQueries;
             _mealRepo = mealRepository;
@@ -66,13 +67,13 @@ namespace MealTime.API.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Update(Meal meal)
+        public async Task<IActionResult> Update(int mealId, List<int> foodIds)
         {
-            if (meal.Id <= 0)
+            if (mealId <= 0)
                 return BadRequest();
             try
             {
-                await _mealRepo.Update(meal, meal.Foods.Select(x => x.Id).ToHashSet());
+                await _mealRepo.Update(mealId, foodIds.ToHashSet());
                 return Ok();
             }
             catch (Exception e)
@@ -88,6 +89,7 @@ namespace MealTime.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<MealDto>> AddFood(MealDto mealDto)
         {
+            
             if (mealDto == null)
                 return BadRequest();
             try
@@ -119,6 +121,6 @@ namespace MealTime.API.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
+        }        
     }
 }

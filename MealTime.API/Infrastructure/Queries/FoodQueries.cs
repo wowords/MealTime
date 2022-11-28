@@ -19,9 +19,12 @@ namespace MealTime.API.Infrastructure.Queries
                 var result = await connection.QueryAsync<FoodDto>(
                     @"SELECT [Id],
                                  [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                                 [Rating],
+                                 [Category],
+                                 [Details],
+                                 [Type],
+                                 [IsHealthy]
+                        FROM [Foods]");
                 return result;
             }
         }
@@ -32,25 +35,32 @@ namespace MealTime.API.Infrastructure.Queries
             {
                 connection.Open();
                 var result = await connection.QueryAsync<FoodDto>(
-                    @"SELECT [Id],
+                    @"SELECT TOP 10 [Id],
                                  [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                                 [Rating],
+                                 [Category],
+                                 [Details],
+                                 [Type],
+                                 [IsHealthy]
+                        FROM [Foods] ORDER BY [Rating]");
                 return result;
             }
         }
-        public async Task<FoodDto> GetFoodById(int Id)
+        public async Task<FoodDto> GetFoodById(int FoodId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 var result = await connection.QueryAsync<FoodDto>(
-                    @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                    @"SELECT     [Name],
+                                 [Recipe],
+                                 [Rating],
+                                 [Category],
+                                 [Details],
+                                 [Type],
+                                 [IsHealthy]                                
+                    FROM [Foods] WHERE [Id] = @FoodId",
+                    new { FoodId });
                 return result.FirstOrDefault();
             }
         }

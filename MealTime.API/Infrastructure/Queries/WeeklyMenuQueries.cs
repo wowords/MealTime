@@ -11,35 +11,7 @@ namespace MealTime.API.Infrastructure.Queries
         {
             _connectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
         }
-        public async Task<IEnumerable<WeeklyMenuDto>> GetAllMenus()
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = await connection.QueryAsync<WeeklyMenuDto>(
-                    @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
-                return result;
-            }
-        }
-
-        public async Task<IEnumerable<WeeklyMenuDto>> GetTopRatedMenus()
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = await connection.QueryAsync<WeeklyMenuDto>(
-                    @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
-                return result;
-            }
-        }
+        
         public async Task<WeeklyMenuDto> GetMenuById(int Id)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -47,10 +19,8 @@ namespace MealTime.API.Infrastructure.Queries
                 connection.Open();
                 var result = await connection.QueryAsync<WeeklyMenuDto>(
                     @"SELECT [Id],
-                                 [Name],
-                                 [Username],
-                                 [IsAdmin]
-                        FROM [Users]");
+                                 [CurrentWeek]
+                        FROM [WeeklyMenus]");
                 return result.FirstOrDefault();
             }
         }

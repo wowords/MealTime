@@ -10,6 +10,8 @@ namespace MealTime.Models.Repository
     {
         Task Create(Meal meal, HashSet<int> foodIds);
         Task Delete(int id);
-        Task Update(Meal meal, HashSet<int> foodIds);
+        Task Update(int mealId, HashSet<int> foodIds);
+        Task<IEnumerable<Meal>> GetMealsForEF();
+        Task SetLastTimeOnMenu(List<int> mealIds);
     }
 }

@@ -4,16 +4,18 @@ using MealTime.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MealTime.Models.infrastructure.Migrations
+namespace MealTime.Models.Infrastructure.Migrations
 {
     [DbContext(typeof(MealTimeContext))]
-    partial class MealTimeContextModelSnapshot : ModelSnapshot
+    [Migration("20221128191821_ManytoManyRemoved")]
+    partial class ManytoManyRemoved
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,7 +92,12 @@ namespace MealTime.Models.infrastructure.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
+                    b.Property<int?>("WeeklyMenuId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WeeklyMenuId");
 
                     b.ToTable("Meals");
                 });
@@ -143,21 +150,6 @@ namespace MealTime.Models.infrastructure.Migrations
                     b.ToTable("WeeklyMenus");
                 });
 
-            modelBuilder.Entity("MealWeeklyMenu", b =>
-                {
-                    b.Property<int>("MealsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenusId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MealsId", "MenusId");
-
-                    b.HasIndex("MenusId");
-
-                    b.ToTable("MealWeeklyMenu");
-                });
-
             modelBuilder.Entity("FoodMeal", b =>
                 {
                     b.HasOne("MealTime.Models.Food", null)
@@ -173,19 +165,16 @@ namespace MealTime.Models.infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MealWeeklyMenu", b =>
+            modelBuilder.Entity("MealTime.Models.Meal", b =>
                 {
-                    b.HasOne("MealTime.Models.Meal", null)
-                        .WithMany()
-                        .HasForeignKey("MealsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MealTime.Models.WeeklyMenu", null)
-                        .WithMany()
-                        .HasForeignKey("MenusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Meals")
+                        .HasForeignKey("WeeklyMenuId");
+                });
+
+            modelBuilder.Entity("MealTime.Models.WeeklyMenu", b =>
+                {
+                    b.Navigation("Meals");
                 });
 #pragma warning restore 612, 618
         }
