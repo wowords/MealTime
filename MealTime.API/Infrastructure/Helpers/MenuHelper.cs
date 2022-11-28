@@ -7,7 +7,6 @@ namespace MealTime.API.Infrastructure.Helpers
 {
     public class MenuHelper
     {
-        private readonly IMealQueries _mealQueries;
         private readonly IMealRepository _mealRepo;
         public MenuHelper(IMealQueries mealQueries, IMealRepository mealRepository)
         {
@@ -31,7 +30,6 @@ namespace MealTime.API.Infrastructure.Helpers
             return allMeals.OrderBy(x => x.Rating).Take(15).Where(x => x.LastOnMenu <= System.DateTime.Now.AddDays(-14)).Take(20).ToList();
         }
         
-        //generate WeeklyMenu for next week, set foods LastWeekonMenu attribute.
         public async Task<WeeklyMenu> GenerateWeeklyMenu()
         {
             bool typeUsed = false;
@@ -54,7 +52,7 @@ namespace MealTime.API.Infrastructure.Helpers
                     {
                         var foods = weeklyMenu.Meals.Select(x => x.Foods);
                         if (foods.Select(x => x.Select(y => y.Type).ToList().Contains(item.Type)).FirstOrDefault())
-                            typeUsed = false; //TODO set to true before publish
+                            typeUsed = true;
                     }
                     if (!typeUsed)
                         weeklyMenu.Meals.Add(meal);
