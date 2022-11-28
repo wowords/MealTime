@@ -65,12 +65,6 @@ namespace MealTime.API.Controllers
             }
         }
 
-        // GET: api/Users/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<User>> GetUser(int id)
-        //{        
-
-        //}
 
         [Route("Update")]
         [HttpPut]

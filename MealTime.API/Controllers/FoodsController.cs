@@ -25,7 +25,6 @@ namespace MealTime.API.Controllers
             _foodQueries = foodQueries; 
         }
 
-        // GET: api/Users
         [Route("GetFoods")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -45,7 +44,6 @@ namespace MealTime.API.Controllers
             }
         }
 
-        // GET: api/Admins
         [Route("GetFoodById")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

@@ -67,18 +67,6 @@ namespace MealTime.API.Infrastructure.Repositories
             }
             _context.Meals.Update(meal);
             await _context.SaveChangesAsync();
-            
-            //Meal meal = _context.Meals.fin
-            //meal.Foods.Clear();
-            //if (foodIds is not null)
-            //    _context.Foods.Where(f => foodIds.Contains(f.Id)).ToList().ForEach(food => meal.Foods.Add(food));
-            //var local = await _context.Meals.FindAsync(meal.Id);
-            //if (local == null)
-            //    throw new MealTimeException("Hiba történt a módosítás során.");
-            //else
-            //    _context.Entry(local).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-            //_context.Entry(meal).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            //await _context.SaveChangesAsync();
         }
 
         public async Task SetLastTimeOnMenu(List<int> mealIds)
